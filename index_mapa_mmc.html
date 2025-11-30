@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Mapa MMC · Fichas de soluciones</title>
+    <style>
+      /* Colores Mapa MMC */
+      :root {
+        --bg-dark: #111111;
+        --bg-card: #1b1b1b;
+        --bg-panel: #ffffff;
+        --accent-gold: #f0b429;
+        --accent-gold-soft: #f7d26f;
+        --text-main: #ffffff;
+        --text-muted: #cccccc;
+        --border-gold: #f0b429;
+        --button-gray: #e0e0e0;
+        --button-gray-text: #333333;
+      }
+
+      * {
+        box-sizing: border-box;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg-dark);
+        color: var(--text-main);
+      }
+
+      .app-wrapper {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      header {
+        background: #000000;
+        border-bottom: 3px solid var(--accent-gold);
+        padding: 16px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .title-block {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .title-block h1 {
+        margin: 0;
+        font-size: 22px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      .title-block span {
+        font-size: 12px;
+        color: var(--accent-gold-soft);
+      }
+
+      .filter-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .filter-bar label {
+        font-size: 13px;
+        color: var(--text-muted);
+      }
+
+      select {
+        padding: 6px 10px;
+        border-radius: 4px;
+        border: 1px solid #444;
+        background: #222;
+        color: var(--text-main);
+        min-width: 240px;
+      }
+
+      main {
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .info-text {
+        font-size: 13px;
+        color: var(--text-muted);
+      }
+
+      .cards-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      /* Tarjeta estilo Mapa MMC */
+      .solution-card {
+        display: flex;
+        flex-wrap: wrap;
+        background: var(--bg-card);
+        border-radius: 6px;
+        overflow: hidden;
+        border: 1px solid #333;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+      }
+
+      .solution-image {
+        flex: 1 1 52%;
+        min-width: 260px;
+        position: relative;
+        min-height: 200px;
+        background: #2a2a2a;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .solution-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      /* Placeholder cuando no hay imagen */
+      .solution-image .no-image {
+        color: #666;
+        font-size: 14px;
+        text-align: center;
+        padding: 20px;
+      }
+
+      .solution-right {
+        flex: 1 1 48%;
+        min-width: 260px;
+        background: var(--bg-panel);
+        color: #222;
+        padding: 16px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .logo-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 6px;
+      }
+
+      .logo-row img {
+        max-height: 36px;
+        max-width: 140px;
+        object-fit: contain;
+      }
+
+      .logo-row .empresa-fallback {
+        font-weight: 600;
+        font-size: 14px;
+        color: #333;
+      }
+
+      .mmc-pill {
+        padding: 4px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--accent-gold);
+        background: #fff7e5;
+        font-size: 11px;
+        color: #444;
+      }
+
+      .solution-title {
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      .empresa-name {
+        font-size: 13px;
+        font-weight: 600;
+        color: #555;
+      }
+
+      .section-title {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #777;
+      }
+
+      .section-text {
+        font-size: 13px;
+        line-height: 1.4;
+      }
+
+      .extra-data {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 18px;
+        font-size: 12px;
+      }
+
+      .btn-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: auto;
+      }
+
+      .btn {
+        padding: 8px 14px;
+        border-radius: 4px;
+        font-size: 13px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        transition: opacity 0.2s;
+        border: none;
+      }
+
+      .btn:hover {
+        opacity: 0.85;
+      }
+
+      .btn-gray {
+        background: var(--button-gray);
+        color: var(--button-gray-text);
+      }
+
+      .btn-gold {
+        background: var(--accent-gold);
+        color: #222;
+        font-weight: bold;
+      }
+
+      .btn-outline {
+        background: white;
+        color: #333;
+        border: 1px solid #bbb;
+      }
+
+      /* Botón solicitar cambios */
+      .btn-cambios {
+        background: transparent;
+        color: var(--accent-gold);
+        border: 1px solid var(--accent-gold);
+        font-weight: 500;
+      }
+
+      .btn-cambios:hover {
+        background: var(--accent-gold);
+        color: #222;
+      }
+
+      .no-results {
+        font-size: 14px;
+        color: var(--text-muted);
+      }
+
+      /* Loading spinner */
+      .loading {
+        display: none;
+        align-items: center;
+        gap: 10px;
+        color: var(--text-muted);
+        font-size: 14px;
+      }
+
+      .loading.active {
+        display: flex;
+      }
+
+      .spinner {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #444;
+        border-top-color: var(--accent-gold);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      /* Disable select while loading */
+      select:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      /* ========== MODAL STYLES ========== */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .modal-overlay.active {
+        display: flex;
+      }
+
+      .modal-content {
+        background: var(--bg-panel);
+        border-radius: 8px;
+        width: 100%;
+        max-width: 500px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      }
+
+      .modal-header {
+        background: var(--accent-gold);
+        color: #222;
+        padding: 16px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .modal-header h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      .modal-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #222;
+        line-height: 1;
+        padding: 0;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+      }
+
+      .modal-close:hover {
+        background: rgba(0, 0, 0, 0.1);
+      }
+
+      .modal-body {
+        padding: 20px;
+      }
+
+      .modal-body .context-info {
+        background: #f5f5f5;
+        border-left: 3px solid var(--accent-gold);
+        padding: 10px 14px;
+        margin-bottom: 16px;
+        font-size: 13px;
+        color: #555;
+      }
+
+      .modal-body .context-info strong {
+        color: #222;
+      }
+
+      .form-group {
+        margin-bottom: 16px;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 6px;
+      }
+
+      .form-group label .required {
+        color: #e53935;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+        font-family: inherit;
+        transition: border-color 0.2s;
+      }
+
+      .form-group input:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: var(--accent-gold);
+      }
+
+      .form-group textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      .form-group .helper-text {
+        font-size: 11px;
+        color: #888;
+        margin-top: 4px;
+      }
+
+      .form-row {
+        display: flex;
+        gap: 12px;
+      }
+
+      .form-row .form-group {
+        flex: 1;
+      }
+
+      .modal-footer {
+        padding: 16px 20px;
+        border-top: 1px solid #eee;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+
+      .btn-cancel {
+        background: #eee;
+        color: #555;
+      }
+
+      .btn-submit {
+        background: var(--accent-gold);
+        color: #222;
+        font-weight: 600;
+      }
+
+      .btn-submit:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      /* Success message */
+      .success-message {
+        display: none;
+        text-align: center;
+        padding: 40px 20px;
+      }
+
+      .success-message.active {
+        display: block;
+      }
+
+      .success-message .icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+      }
+
+      .success-message h4 {
+        margin: 0 0 8px 0;
+        color: #222;
+        font-size: 18px;
+      }
+
+      .success-message p {
+        margin: 0;
+        color: #666;
+        font-size: 14px;
+      }
+
+      .form-container {
+        display: block;
+      }
+
+      .form-container.hidden {
+        display: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="app-wrapper">
+      <header>
+        <div class="title-block">
+          <h1>MAPA MMC · Fichas de soluciones</h1>
+          <span>Consulta por empresa y revisa sus soluciones industrializadas</span>
+        </div>
+
+        <div class="filter-bar">
+          <label for="empresaSelect">Empresa:</label>
+          <select id="empresaSelect">
+            <option value="">Selecciona una empresa…</option>
+          </select>
+        </div>
+      </header>
+
+      <main>
+        <p class="info-text">
+          Elige una empresa para visualizar sus soluciones en formato de ficha.
+        </p>
+
+        <!-- Loading indicator -->
+        <div id="loading" class="loading">
+          <div class="spinner"></div>
+          <span>Cargando soluciones e imágenes...</span>
+        </div>
+
+        <div id="cardsContainer" class="cards-container"></div>
+        <div id="noResults" class="no-results" style="display:none;">
+          No se encontraron soluciones para esta empresa.
+        </div>
+      </main>
+    </div>
+
+    <!-- Modal para solicitar cambios -->
+    <div id="modalCambios" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>📝 Solicitar cambios</h3>
+          <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Contexto de la solución -->
+          <div class="context-info" id="modalContext">
+            <strong>Empresa:</strong> <span id="ctxEmpresa">-</span><br>
+            <strong>Solución:</strong> <span id="ctxSolucion">-</span>
+          </div>
+
+          <!-- Formulario -->
+          <div id="formContainer" class="form-container">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Nombre <span class="required">*</span></label>
+                <input type="text" id="inputNombre" placeholder="Ej: Juan" required>
+              </div>
+              <div class="form-group">
+                <label>Apellido <span class="required">*</span></label>
+                <input type="text" id="inputApellido" placeholder="Ej: Pérez">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Correo electrónico <span class="required">*</span></label>
+              <input type="email" id="inputCorreo" placeholder="Ej: juan.perez@empresa.cl" required>
+            </div>
+
+            <div class="form-group">
+              <label>Empresa</label>
+              <input type="text" id="inputEmpresaUsuario" placeholder="Nombre de tu empresa (opcional)">
+            </div>
+
+            <div class="form-group">
+              <label>Descripción de los cambios <span class="required">*</span></label>
+              <textarea id="inputDescripcion" placeholder="Describe qué campos deseas modificar y cuál debería ser la información correcta..."></textarea>
+              <div class="helper-text">Por favor indica claramente qué información es incorrecta y cuál es la correcta.</div>
+            </div>
+          </div>
+
+          <!-- Mensaje de éxito -->
+          <div id="successMessage" class="success-message">
+            <div class="icon">✅</div>
+            <h4>¡Solicitud enviada!</h4>
+            <p>Revisaremos tu solicitud y te contactaremos pronto.</p>
+          </div>
+        </div>
+
+        <div class="modal-footer" id="modalFooter">
+          <button class="btn btn-cancel" onclick="closeModal()">Cancelar</button>
+          <button class="btn btn-submit" id="btnEnviar" onclick="enviarSolicitud()">Enviar solicitud</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 👉 IMPORTANTE: Reemplaza esta URL por la de tu Web App de Apps Script (la que termina en /exec)
+      const API_URL = 'https://script.google.com/macros/s/TU_ID_DE_DEPLOY/exec';
+
+      // Variables globales para el modal
+      let currentSolucionData = null;
+
+      document.addEventListener('DOMContentLoaded', function () {
+        // Cargar empresas al inicio
+        fetchCompanies();
+
+        document.getElementById('empresaSelect').addEventListener('change', function () {
+          const empresa = this.value;
+          if (empresa) {
+            loadSolutions(empresa);
+          } else {
+            clearCards();
+          }
+        });
+
+        // Cerrar modal con Escape
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape') closeModal();
+        });
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('modalCambios').addEventListener('click', function(e) {
+          if (e.target === this) closeModal();
+        });
+      });
+
+      // ======= Llamadas a la API (fetch) =======
+
+      async function fetchCompanies() {
+        try {
+          const res = await fetch(API_URL + '?action=companies');
+          const data = await res.json();
+          populateCompanies(data.companies || []);
+        } catch (err) {
+          console.error(err);
+          alert('Error al cargar la lista de empresas');
+        }
+      }
+
+      async function loadSolutions(empresa) {
+        showLoading(true);
+        try {
+          const url = API_URL + '?action=solutions&empresa=' + encodeURIComponent(empresa);
+          const res = await fetch(url);
+          const data = await res.json();
+          showLoading(false);
+          renderCards(data.solutions || []);
+        } catch (err) {
+          console.error(err);
+          showLoading(false);
+          alert('Error al cargar las soluciones. Por favor intenta de nuevo.');
+        }
+      }
+
+      async function enviarSolicitud() {
+        // Validar campos requeridos
+        const nombre = document.getElementById('inputNombre').value.trim();
+        const apellido = document.getElementById('inputApellido').value.trim();
+        const correo = document.getElementById('inputCorreo').value.trim();
+        const empresaUsuario = document.getElementById('inputEmpresaUsuario').value.trim();
+        const descripcion = document.getElementById('inputDescripcion').value.trim();
+
+        if (!nombre) {
+          alert('Por favor ingresa tu nombre.');
+          document.getElementById('inputNombre').focus();
+          return;
+        }
+
+        if (!apellido) {
+          alert('Por favor ingresa tu apellido.');
+          document.getElementById('inputApellido').focus();
+          return;
+        }
+
+        if (!correo) {
+          alert('Por favor ingresa tu correo electrónico.');
+          document.getElementById('inputCorreo').focus();
+          return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(correo)) {
+          alert('Por favor ingresa un correo electrónico válido.');
+          document.getElementById('inputCorreo').focus();
+          return;
+        }
+
+        if (!descripcion) {
+          alert('Por favor describe los cambios que deseas solicitar.');
+          document.getElementById('inputDescripcion').focus();
+          return;
+        }
+
+        const btnEnviar = document.getElementById('btnEnviar');
+        btnEnviar.disabled = true;
+        btnEnviar.textContent = 'Enviando...';
+
+        const solicitud = {
+          nombre: nombre,
+          apellido: apellido,
+          correo: correo,
+          empresaUsuario: empresaUsuario,
+          descripcion: descripcion,
+          empresaFicha: currentSolucionData.empresa,
+          solucionFicha: currentSolucionData.solucion,
+          mmcFicha: currentSolucionData.mmc,
+          fecha: new Date().toLocaleString('es-CL')
+        };
+
+        try {
+          const res = await fetch(API_URL + '?action=solicitud', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(solicitud)
+          });
+          const data = await res.json();
+
+          if (data && data.success) {
+            document.getElementById('formContainer').classList.add('hidden');
+            document.getElementById('successMessage').classList.add('active');
+            document.getElementById('modalFooter').style.display = 'none';
+          } else {
+            alert(data.message || 'Error al enviar la solicitud.');
+            btnEnviar.disabled = false;
+            btnEnviar.textContent = 'Enviar solicitud';
+          }
+        } catch (err) {
+          console.error(err);
+          alert('Error al enviar la solicitud. Por favor intenta de nuevo.');
+          btnEnviar.disabled = false;
+          btnEnviar.textContent = 'Enviar solicitud';
+        }
+      }
+
+      // ======= Funciones de UI =======
+
+      function showLoading(show) {
+        const loading = document.getElementById('loading');
+        const select = document.getElementById('empresaSelect');
+        
+        if (show) {
+          loading.classList.add('active');
+          select.disabled = true;
+          clearCards();
+        } else {
+          loading.classList.remove('active');
+          select.disabled = false;
+        }
+      }
+
+      function populateCompanies(list) {
+        const sel = document.getElementById('empresaSelect');
+        list.forEach(e => {
+          const o = document.createElement('option');
+          o.value = e;
+          o.textContent = e;
+          sel.appendChild(o);
+        });
+      }
+
+      function clearCards() {
+        document.getElementById('cardsContainer').innerHTML = "";
+        document.getElementById('noResults').style.display = "none";
+      }
+
+      function renderCards(solutions) {
+        clearCards();
+        const cont = document.getElementById('cardsContainer');
+
+        if (!solutions || solutions.length === 0) {
+          document.getElementById('noResults').style.display = "block";
+          return;
+        }
+
+        solutions.forEach(sol => {
+          const card = document.createElement('div');
+          card.className = 'solution-card';
+
+          const left = document.createElement('div');
+          left.className = 'solution-image';
+          
+          if (sol.prodUrl) {
+            const img = document.createElement('img');
+            img.src = sol.prodUrl;
+            img.alt = sol.solucion;
+            img.onerror = function() {
+              this.style.display = 'none';
+              const noImg = document.createElement('div');
+              noImg.className = 'no-image';
+              noImg.textContent = 'Imagen no disponible';
+              this.parentNode.appendChild(noImg);
+            };
+            left.appendChild(img);
+          } else {
+            const noImg = document.createElement('div');
+            noImg.className = 'no-image';
+            noImg.textContent = 'Sin imagen de producto';
+            left.appendChild(noImg);
+          }
+          card.appendChild(left);
+
+          const right = document.createElement('div');
+          right.className = 'solution-right';
+
+          const logoRow = document.createElement('div');
+          logoRow.className = 'logo-row';
+
+          if (sol.logoUrl) {
+            const logo = document.createElement('img');
+            logo.src = sol.logoUrl;
+            logo.alt = sol.empresa + ' logo';
+            logo.onerror = function() {
+              this.style.display = 'none';
+              const fallback = document.createElement('span');
+              fallback.className = 'empresa-fallback';
+              fallback.textContent = sol.empresa;
+              this.parentNode.insertBefore(fallback, this.parentNode.firstChild);
+            };
+            logoRow.appendChild(logo);
+          } else {
+            const fallback = document.createElement('span');
+            fallback.className = 'empresa-fallback';
+            fallback.textContent = sol.empresa;
+            logoRow.appendChild(fallback);
+          }
+
+          if (sol.mmc) {
+            const pill = document.createElement('span');
+            pill.className = 'mmc-pill';
+            pill.textContent = 'MMC ' + sol.mmc;
+            logoRow.appendChild(pill);
+          }
+
+          right.appendChild(logoRow);
+
+          const t = document.createElement('h2');
+          t.className = 'solution-title';
+          t.textContent = sol.solucion;
+          right.appendChild(t);
+
+          const e = document.createElement('div');
+          e.className = 'empresa-name';
+          e.textContent = sol.empresa;
+          right.appendChild(e);
+
+          if (sol.descEmpresa) {
+            const st = document.createElement('div');
+            st.className = 'section-title';
+            st.textContent = 'Descripción empresa';
+            right.appendChild(st);
+
+            const tx = document.createElement('p');
+            tx.className = 'section-text';
+            tx.textContent = sol.descEmpresa;
+            right.appendChild(tx);
+          }
+
+          if (sol.descSolucion) {
+            const st = document.createElement('div');
+            st.className = 'section-title';
+            st.textContent = 'Descripción solución';
+            right.appendChild(st);
+
+            const tx = document.createElement('p');
+            tx.className = 'section-text';
+            tx.textContent = sol.descSolucion;
+            right.appendChild(tx);
+          }
+
+          const extra = document.createElement('div');
+          extra.className = 'extra-data';
+
+          if (sol.cobertura) {
+            extra.innerHTML += `<span><strong>Cobertura:</strong> ${escapeHtml(sol.cobertura)}</span>`;
+          }
+          if (sol.ubicacion) {
+            extra.innerHTML += `<span><strong>Fábrica:</strong> ${escapeHtml(sol.ubicacion)}</span>`;
+          }
+          if (sol.mail) {
+            extra.innerHTML += `<span><strong>Contacto:</strong> ${escapeHtml(sol.mail)}</span>`;
+          }
+
+          right.appendChild(extra);
+
+          const btns = document.createElement('div');
+          btns.className = 'btn-row';
+
+          const b1 = document.createElement('a');
+          b1.className = 'btn btn-gray';
+          b1.href = sol.mail ? 'mailto:' + sol.mail : '#';
+          b1.textContent = 'Contactarlos';
+          if (!sol.mail) b1.style.opacity = '0.5';
+          btns.appendChild(b1);
+
+          const b2 = document.createElement('a');
+          b2.className = 'btn btn-gold';
+          b2.href = sol.masInfo || '#';
+          b2.target = "_blank";
+          b2.textContent = '+ información';
+          if (!sol.masInfo) b2.style.opacity = '0.5';
+          btns.appendChild(b2);
+
+          const b3 = document.createElement('a');
+          b3.className = 'btn btn-outline';
+          b3.href = sol.web || '#';
+          b3.target = "_blank";
+          b3.textContent = 'Visitar web';
+          if (!sol.web) b3.style.opacity = '0.5';
+          btns.appendChild(b3);
+
+          const b4 = document.createElement('button');
+          b4.className = 'btn btn-cambios';
+          b4.textContent = '✏️ Solicitar cambios';
+          b4.onclick = function() {
+            openModal(sol);
+          };
+          btns.appendChild(b4);
+
+          right.appendChild(btns);
+
+          card.appendChild(right);
+          cont.appendChild(card);
+        });
+      }
+
+      function openModal(solucionData) {
+        currentSolucionData = solucionData;
+        
+        document.getElementById('ctxEmpresa').textContent = solucionData.empresa || '-';
+        document.getElementById('ctxSolucion').textContent = solucionData.solucion || '-';
+        
+        document.getElementById('inputNombre').value = '';
+        document.getElementById('inputApellido').value = '';
+        document.getElementById('inputCorreo').value = '';
+        document.getElementById('inputEmpresaUsuario').value = '';
+        document.getElementById('inputDescripcion').value = '';
+        
+        document.getElementById('formContainer').classList.remove('hidden');
+        document.getElementById('successMessage').classList.remove('active');
+        document.getElementById('modalFooter').style.display = 'flex';
+        document.getElementById('btnEnviar').disabled = false;
+        document.getElementById('btnEnviar').textContent = 'Enviar solicitud';
+        
+        document.getElementById('modalCambios').classList.add('active');
+      }
+
+      function closeModal() {
+        document.getElementById('modalCambios').classList.remove('active');
+        currentSolucionData = null;
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+    </script>
+  </body>
+</html>
